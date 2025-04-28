@@ -7,9 +7,9 @@ class User:
          self.conn = psycopg2.connect(
             host="localhost",
             port="5432",
-            database="your_database",
-            user="your_user",
-            password="your_password")
+            database="postgres",
+            user="postgres",
+            password="matchaluvr")
          self.cursor = self.conn.cursor()
    
     def logOut(self):
