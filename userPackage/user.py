@@ -24,13 +24,13 @@ class User:
         @except error e if unsuccessful
         """
         try:
-            self.cursor.execute("SELECT product_id, price FROM products")
-            products = self.fetchall()
+            self.cursor.execute("SELECT product_id, name, brand, price FROM product")
+            products = self.cursor.fetchall()
             if not products:
                 print("No products available.")
             else:
                 print("\nAvailable Products:")
-                for product_id, price in products:
-                    print(f"- {product_id}: ${price:.2f}")
+                for product_id, name, brand, price in products:
+                    print(f"- ID: {product_id} Type: {name} Brand: {brand} Price: ${price:.2f}")
         except Exception as e:
             print(f"Error fetching products: {e}")
