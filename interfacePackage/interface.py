@@ -57,11 +57,12 @@ class StaffInterface(Interface):
         print("=== Staff Menu ===")
 
     def show_menu(self):
-        print("1. Add Stock and Price")
-        print("2. Modify Stock and Price")
-        print("3. Delete Stock and Price")
-        print("4. Add Stock to Warehouse")
-        print("5. End Staff Session")
+        print("1. View Products")
+        print("2. Add Products and Price")
+        print("3. Modify Products and Price")
+        print("4. Delete Products and Price")
+        print("5. Add Stock to Warehouse")
+        print("6. End Staff Session")
         self.menu_selection()
  
 
@@ -70,14 +71,22 @@ class StaffInterface(Interface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.staffMember.add_product(prodNo = input("Product ID: "), price = float(input("Product ID: ")))
+                    self.staffMember.show_products()
                 elif (userInput == 2):
-                    self.staffMember.modify_product(prodNo = input("Product ID: "), price = float(input("Product ID: ")))
+                    prodNo = input("Product ID: ")
+                    price = float(input("Price: "))
+                    self.staffMember.add_product(prodNo, price)
                 elif (userInput == 3):
-                    self.staffMember.delete_product(prodNo = input("Product ID: "))
+                    prodNo = input("Product ID: ")
+                    price = float(input("Price: "))
+                    self.staffMember.modify_product(prodNo, price)
                 elif (userInput == 4):
-                    self.staffMember.add_stock(prodNo = input("Product[Stock] ID: "))
+                    prodNo = input("Product ID to be deleted: ")
+                    self.staffMember.delete_product(prodNo)
                 elif (userInput == 5):
+                    prodNo = input("Product[Stock] ID: ")
+                    self.staffMember.add_stock(prodNo)
+                elif (userInput == 6):
                     print("\n")
                     print("Ending Staff Session...")
                     print("\n")
@@ -114,7 +123,7 @@ class CustInterface(Interface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.custMember.browse_products()
+                    self.custMember.show_products()
                 elif (userInput == 2):
                     print("2")
                 elif (userInput == 3):

@@ -15,4 +15,22 @@ class User:
     def logOut(self):
         self.cursor.close()
         self.conn.close()
-        
+     
+    def show_products(self):
+        """
+        Browse products in the products table
+        @param none
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.execute("SELECT product_id, price FROM products")
+            products = self.fetchall()
+            if not products:
+                print("No products available.")
+            else:
+                print("\nAvailable Products:")
+                for product_id, price in products:
+                    print(f"- {product_id}: ${price:.2f}")
+        except Exception as e:
+            print(f"Error fetching products: {e}")

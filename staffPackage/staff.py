@@ -9,6 +9,9 @@ class Staff(User):
     
     def __init__(self):
         super().__init__()
+
+    def show_products(self):
+        return super().show_products()
     
     def add_product(self, prodNo, price):
         """
@@ -77,3 +80,6 @@ class Staff(User):
             self.commit() # commit transaction
         except:
             return None
+
+    
+    
