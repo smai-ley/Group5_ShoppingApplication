@@ -3,7 +3,6 @@
 import psycopg2
 
 class User:
-    
     def __init__(self):
          self.conn = psycopg2.connect(
             host="localhost",

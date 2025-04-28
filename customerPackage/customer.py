@@ -111,3 +111,54 @@ class Customer(User):
             self.commit() # commit transaction
         except: 
             return None
+
+    def browse_products(self):
+        """
+        Browse products in the products table
+        @param none
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.execute("SELECT product_id, price FROM products")
+            products = self.fetchall()
+            if not products:
+                print("No products available.")
+            else:
+                print("\nAvailable Products:")
+                for product_id, price in products:
+                    print(f"- {product_id}: ${price:.2f}")
+        except Exception as e:
+            print(f"Error fetching products: {e}")
+
+
+
+    def customer_menu(self):
+        catalog = ProductCatalog(self)  # pass db connection!
+
+            if choice == "1":
+                catalog.browse_products()
+
+            elif choice == "2":
+                prod_id = input("Enter product ID to add: ")
+                qty = int(input("Enter quantity: "))
+                customer.shopping_cart.add_item(prod_id, qty)
+
+            elif choice == "3":
+                customer.shopping_cart.view_cart()
+
+            elif choice == "4":
+                customer.shopping_cart.checkout()
+
+            elif choice == "5":
+                print("Manage Payment Cards (to be implemented).")
+
+            elif choice == "6":
+                print("Manage Addresses (to be implemented).")
+
+            elif choice == "7":
+                print("Logging out...")
+                break
+
+            else:
+                print("Invalid choice. Try again.")

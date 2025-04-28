@@ -8,7 +8,7 @@ class Staff(User):
     # adds stock to warehouse
     
     def __init__(self):
-        super().__init__("STAFF")
+        super().__init__()
     
     def add_product(self, prodNo, price):
         """
@@ -27,7 +27,7 @@ class Staff(User):
         except:
             return None
         
-    def delete(self, prodNo): # May need support for removing price according to rubric
+    def delete_product(self, prodNo): # May need support for removing price according to rubric
         """
         Removes a product from products table 
         @param prodNo: string, the product to be removed
@@ -43,7 +43,7 @@ class Staff(User):
         except:
             return None
     
-    def modify(self, prodNo, price):
+    def modify_product(self, prodNo, price):
         """
         Modifies a product and price in the product table
         @param prodNo: string, the product to be changed

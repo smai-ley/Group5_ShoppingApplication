@@ -11,6 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>Group5_ShoppingApplication</Name>
     <RootNamespace>Group5_ShoppingApplication</RootNamespace>
+    <InterpreterId>MSBuild|env 4.11|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,8 +28,17 @@
     <Compile Include="customerPackage\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="interfacePackage\interface.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="interfacePackage\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mainPackage\main.py" />
     <Compile Include="mainPackage\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="shoppingCartPackage\shoppingCart.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="staffPackage\staff.py">
@@ -40,18 +50,28 @@
     <Compile Include="userPackage\user.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="userPackage\userObject.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="userPackage\__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="customerPackage\" />
+    <Folder Include="interfacePackage\" />
     <Folder Include="mainPackage\" />
+    <Folder Include="shoppingCartPackage\" />
     <Folder Include="staffPackage\" />
     <Folder Include="userPackage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="env 4.11\">
+      <Id>env 4.11</Id>
+      <Version>3.11</Version>
+      <Description>env 4.11 (Python 3.11 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
