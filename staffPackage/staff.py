@@ -21,8 +21,8 @@ class Staff(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
-                         INSERT INTO products (product_id, price)
+            self.conn.execute("""
+                         INSERT INTO product (product_id, price)
                          VALUES (%s, %s)
                          """, (prodNo, price))
             print(prodNo + "successfully added to table.")
@@ -38,7 +38,7 @@ class Staff(User):
         """
         try:
             self.execute("""
-                         DELETE FROM products
+                         DELETE FROM product
                          WHERE id = %s
                          """, (prodNo,))
             print(prodNo + "successfully removed from table.")
@@ -55,7 +55,7 @@ class Staff(User):
         """
         try:
             self.execute("""
-                         UPDATE products
+                         UPDATE product
                          SET product_id = %s, price = %s
                          WHERE id = %s
                          """, (prodNo, price))
@@ -64,7 +64,7 @@ class Staff(User):
         except: 
             return None
         
-    def add_stock(self, prodNo, qty): # Remove prodNo depending on relational schema
+    def add_stock(self, prodNo, qty, warehouse_id = "wh_1"): # Remove prodNo depending on relational schema
         """
         Adds stock(product) and quantity info to warehouse table
         @param prodNo: string, the product to be added
@@ -73,9 +73,9 @@ class Staff(User):
         """
         try:
             self.execute("""
-                         INSERT INTO warehouse (product_id, quantity)
-                         VALUES (%s, %s)
-                         """, (prodNo, qty))
+                         INSERT INTO stock (product_id, quantity)
+                         VALUES (%s, %s, %s)
+                         """, (prodNo, qty, warehouse_id))
             print(qty + " of " + prodNo + "successfully added to table.")
             self.commit() # commit transaction
         except:

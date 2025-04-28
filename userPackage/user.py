@@ -24,7 +24,7 @@ class User:
         @except error e if unsuccessful
         """
         try:
-            self.execute("SELECT product_id, price FROM products")
+            self.cursor.execute("SELECT product_id, price FROM products")
             products = self.fetchall()
             if not products:
                 print("No products available.")
