@@ -61,20 +61,19 @@ class Staff(User):
         except: 
             return None
         
-    def add_stock(self, stockNo, prodNo, qty): # Remove prodNo depending on relational schema
+    def add_stock(self, prodNo, qty): # Remove prodNo depending on relational schema
         """
-        Adds stock, product, and quantity info to warehouse table
-        @param stockNo: string, the stock to be added
+        Adds stock(product) and quantity info to warehouse table
         @param prodNo: string, the product to be added
         @param qty: int, the amount to be added
         @return: none if unsuccessful
         """
         try:
             self.execute("""
-                         INSERT INTO warehouse (stock_id, product_id, quantity)
-                         VALUES (%s, %s, %s)
-                         """, (stockNo, prodNo, qty))
-            print(qty + " of " + stockNo + "successfully added to table.")
+                         INSERT INTO warehouse (product_id, quantity)
+                         VALUES (%s, %s)
+                         """, (prodNo, qty))
+            print(qty + " of " + prodNo + "successfully added to table.")
             self.commit() # commit transaction
         except:
             return None
