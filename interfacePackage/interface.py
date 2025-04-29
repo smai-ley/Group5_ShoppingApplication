@@ -136,7 +136,7 @@ class CustInterface(Interface):
                 elif (userInput == 6):
                     return Address(self.cust_id)
                 elif (userInput == 7):
-                    self.custMember.view_balance()
+                    self.custMember.view_balance(self.cust_id)
                 elif (userInput == 8):
                     print("\nEnding Customer Session...\n")
                     return Interface()
@@ -194,7 +194,7 @@ class Address(CustInterface):
 
     def __init__(self, cust_id):
         self.cust_id = cust_id
-        self.staffMember = Customer(cust_id) # Staff connection to DB from Staff Class
+        self.custMember = Customer(cust_id) # Customer connection to DB from Customer Class
         self.welcome()
         self.show_menu()
 
@@ -215,13 +215,13 @@ class Address(CustInterface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.custMember.view_address() ######################### DNE yet
+                    self.custMember.view_address(self.cust_id)
                 elif (userInput == 2):
-                    self.custMember.add_address()
+                    self.custMember.add_address(input("New Address (Format: Street, City): "), self.cust_id)
                 elif (userInput == 3):
-                    self.custMember.modify_address()
+                    self.custMember.modify_address(input("Old Address (Format: Street, City): "), input("New Address (Format: Street, City): "), self.cust_id)
                 elif (userInput == 4):
-                    self.custMember.delete_address()
+                    self.custMember.delete_address(input("Old Address (Format: Street, City): "), self.cust_id)
                 elif (userInput == 5):
                     print("\nClosing Address Menu...\n")
                     return CustInterface(self.cust_id)
@@ -259,16 +259,11 @@ class ShopCart(CustInterface):
                 if (userInput == 1):
                     self.shopCart.view_cart()
                 elif (userInput == 2):
-                    prodNo = input("Product ID: ")
-                    qty = input("Quantity: ")
-                    self.shopCart.add_item(prodNo,qty)
+                    self.shopCart.add_item(input("Product ID: "),input("Quantity: "))
                 elif (userInput == 3):
-                    prodNo = input("Product ID: ")
-                    self.shopCart.remove_item(prodNo)
+                    self.shopCart.remove_item(input("Product ID: "))
                 elif (userInput == 4):
-                    prodNo = input("Product ID: ")
-                    qty = input("Quantity: ")
-                    self.shopCart.change_quantity(prodNo, qty)
+                    self.shopCart.change_quantity(input("Product ID: "), input("Quantity: "))
                 elif (userInput == 5):
                     print("\nClosing Card Menu...\n")
                     return CustInterface(self.cust_id)
@@ -303,9 +298,9 @@ class Checkout(Interface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.custMember.view_cards()
+                    print("1") 
                 elif (userInput == 2):
-                    self.custMember.add_card()
+                    print("2")
                 elif (userInput == 3):
                     self.shopCart.checkout()
                     self.cart_art()
@@ -318,9 +313,11 @@ class Checkout(Interface):
                     print("Invalid input or missing numbers.")   
 
 
-    def cart_art():
-        print(r"""⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠈⠛⠻⠶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    def cart_art(self):
+        print("\tOrder Placed!")
+        print(sum(self.shopCart.items.values()))
+        print(r"""⠀⠀⠀⠀ Shop Again!⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            ⠀⠈⠛⠻⠶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
             ⠀⠀⠀⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
             ⠀⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
             ⠀⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀

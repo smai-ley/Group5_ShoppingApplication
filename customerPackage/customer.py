@@ -120,7 +120,7 @@ class Customer(User):
 
     ### Modify Addresses
         
-    def add_address(self, address): # address should be a csv string, THIS FUNCTION IS 85% CORRECT
+    def add_address(self, address, user_id): # address should be a csv string, THIS FUNCTION IS 85% CORRECT
         """
         Adds new address to customer info
         @param address: string, the address to be added
@@ -128,34 +128,38 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                         INSERT INTO customer (address)
+                         INSERT INTO customer (address, customer_id)
                          VALUES (%s)
-                         """, (address))
+                         """, (address, user_id))
             print(address + "successfully added to table.")
             self.conn.commit() # commit transaction
         except:
             self.conn.rollback()  # Reset connection after failure
             return None
      
-    def modify_address(self, address):
+    def modify_address(self, old_address, new_address, user_id):
         """
-        Modify address in customer info
-        @param address: str, the address to be changed
-        @return: none if unsuccessful
+        Modify an address in the customer address table
+        @param old_address: str, the current address to replace
+        @param new_address: str, the new address to set
+        @param user_id: str or int, the customer identifier
+        @return: None if unsuccessful
         """
         try:
             self.cursor.execute("""
-                         UPDATE customer
-                         SET address = %s
-                         WHERE customer_id = %s
-                         """, (address, self.cust_id))
-            print(address + "successfully modified in table.") 
-            self.conn.commit() # commit transaction
-        except: 
-            self.conn.rollback()  # Reset connection after failure
+                UPDATE customeraddress
+                SET address = %s
+                WHERE address = %s
+                  AND customer_id = %s
+            """, (new_address, old_address, user_id))
+            self.conn.commit()
+            print(f"{new_address} successfully modified in table.")
+        except Exception as e:
+            self.conn.rollback()
+            print("Error modifying address:", e)
             return None
 
-    def delete_address(self, address):
+    def delete_address(self, address, user_id):
         """
         Delete address from customer info
         @param address: string, the address to be deleted
@@ -165,7 +169,8 @@ class Customer(User):
             self.cursor.execute("""
                 DELETE FROM customer
                 WHERE address = %s
-            """, (address,))
+                    AND customer_id = %s                
+            """, (address, user_id))
             self.conn.commit()
             print(address + " successfully removed from table.")
         except Exception as e:
@@ -173,7 +178,27 @@ class Customer(User):
             print("Error deleting address:", e)
             return None
 
-    def view_balance(self):
+    def view_address(self, user_id):
+        """
+        Show customer addresses
+        @param none
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.cursor.execute("SELECT customer_id, address FROM customer WHERE customer_id = %s", (user_id,))
+            products = self.cursor.fetchall()
+            if not address:
+                print("No address available.")
+            else:
+                print("Addresses:")
+                for customer_id, address in products:
+                    print(f"- Customer ID: {customer_id} - Balance: ${address}")
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print(f"Error fetching Addresses: {e}")
+
+    def view_balance(self, user_id):
         """
         Show customer balance
         @param none
@@ -181,17 +206,17 @@ class Customer(User):
         @except error e if unsuccessful
         """
         try:
-            self.cursor.execute("SELECT customer_id, balance FROM customer")
+            self.cursor.execute("SELECT customer_id, balance FROM customer WHERE customer_id = %s", (user_id,))
             products = self.cursor.fetchall()
             if not products:
                 print("No balance available.")
             else:
-                print("\Customer Balance:")
+                print("Customer Balance:")
                 for customer_id, balance in products:
                     print(f"- Customer ID: {customer_id} - Balance: ${balance}")
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
-            print(f"Error fetching Stock: {e}")
+            print(f"Error fetching Balance: {e}")
 
     def view_prodInfo(self, prodNo):
         """
@@ -207,7 +232,7 @@ class Customer(User):
             products = self.cursor.fetchall()
             print("\Customer Balance:")
             for product_id, type, brand, description, price in products:
-                  print(f"- Product ID: {product_id} - Balance: ${balance}")
+                  print(f"- Product ID: {product_id} - Balance: ${price}")
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
-            print(f"Error fetching Stock: {e}")
+            print(f"Error fetching Product Ascii: {e}")
