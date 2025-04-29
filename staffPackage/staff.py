@@ -13,6 +13,9 @@ class Staff(User):
     def show_products(self):
         return super().show_products()
     
+    def show_stock(self):
+        return super().show_stock()
+    
     def add_product(self, prodNo, price):
         """
         Adds a product and its price into the table products as a new row
@@ -25,25 +28,28 @@ class Staff(User):
                          INSERT INTO product (product_id, price)
                          VALUES (%s, %s)
                          """, (prodNo, price))
-            print(prodNo + "successfully added to table.")
+            print(prodNo + " successfully added to table.")
             self.conn.commit() # commit transaction
         except:
+            self.conn.rollback()  # Reset connection after failure
             return None
         
-    def delete_product(self, prodNo): # May need support for removing price according to rubric
+    def delete_product(self, prodNo):
         """
-        Removes a product from products table 
-        @param prodNo: string, the product to be removed
-        @return: none if unsuccessful
+        Removes a product from the product table 
+        @param prodNo: string, the product_id of the product to be removed
+        @return: None if unsuccessful
         """
         try:
             self.cursor.execute("""
-                         DELETE FROM product
-                         WHERE id = %s
-                         """, (prodNo,))
-            print(prodNo + "successfully removed from table.")
-            self.conn.commit() # commit transaction
-        except:
+                DELETE FROM product
+                WHERE product_id = %s
+            """, (prodNo,))
+            self.conn.commit()
+            print(prodNo + " successfully removed from table.")
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print("Error deleting product:", e)
             return None
     
     def modify_product(self, prodNo, price):
@@ -62,6 +68,7 @@ class Staff(User):
             print(prodNo + "costing " + {price} + " successfully modified in table.")
             self.conn.commit()
         except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
             print("Error modifying product:", e)
             return None
         
@@ -77,9 +84,10 @@ class Staff(User):
                          INSERT INTO stock (product_id, quantity)
                          VALUES (%s, %s, %s)
                          """, (prodNo, qty, warehouse_id))
-            print(qty + " of " + prodNo + "successfully added to table.")
+            print(qty + " of " + prodNo + " successfully added to table.")
             self.conn.commit() # commit transaction
         except:
+            self.conn.rollback()  # Reset connection after failure
             return None
 
     

@@ -4,7 +4,6 @@ from customerPackage.customer import Customer
 from staffPackage.staff import Staff
 from userPackage import user
 
-
 class Interface:
     def __init__(self):
         self.show_menu()       
@@ -49,7 +48,7 @@ class Interface:
 class StaffInterface(Interface):
 
     def __init__(self):
-        staffMember = Staff() # Staff connection to DB from Staff Class
+        self.staffMember = Staff() # Staff connection to DB from Staff Class
         self.welcome()
         self.show_menu()
 
@@ -61,10 +60,10 @@ class StaffInterface(Interface):
         print("2. Add Products and Price")
         print("3. Modify Products and Price")
         print("4. Delete Products and Price")
-        print("5. Add Stock to Warehouse")
-        print("6. End Staff Session")
+        print("5. View Stock")
+        print("6. Add Stock to Warehouse")
+        print("7. End Staff Session")
         self.menu_selection()
- 
 
     def menu_selection(self):
         while True:
@@ -87,8 +86,11 @@ class StaffInterface(Interface):
                     prodNo = input("Product[Stock] ID: ")
                     self.staffMember.add_stock(prodNo)
                 elif (userInput == 6):
+                    self.staffMember.show_products()
+                elif (userInput == 7):
                     print("\n")
                     print("Ending Staff Session...")
+                    self.bear()
                     print("\n")
                     return Interface()
                 else:
@@ -131,10 +133,12 @@ class CustInterface(Interface):
                 elif (userInput == 4):
                     print("4")
                 elif (userInput == 5):
-                    print("5")
+                    return Card()
                 elif (userInput == 6):
-                    print("6")
+                    return Address()
                 elif (userInput == 7):
+                    print("7")
+                elif (userInput == 8):
                     print("\n")
                     print("Ending Customer Session...")
                     print("\n")
@@ -161,6 +165,47 @@ class Card(Interface):
         print("2. Add Credit Card")
         print("3. Modify Credit Card")
         print("4. Delete Credit Card")
+        print("5. Return to Customer Menu")
+        self.menu_selection()
+
+    def menu_selection(self):
+        while True:
+            try:
+                userInput = int(input("Menu Index: "))
+                if (userInput == 1):
+                    self.custMember.view_cards()
+                elif (userInput == 2):
+                    self.custMember.add_card()
+                elif (userInput == 3):
+                    self.custMember.modify_card()
+                elif (userInput == 4):
+                    self.custMember.delete_card()
+                elif (userInput == 5):
+                    print("\n")
+                    print("Ending Staff Session...")
+                    print("\n")
+                    return CustInterface()
+                else:
+                    print("Invalid input.")
+            except ValueError:
+                    print("Invalid input or missing numbers.")   
+
+
+class Address(Interface):
+
+    def __init__(self):
+        #self.staffMember = Customer() # Staff connection to DB from Staff Class
+        self.welcome()
+        self.show_menu()
+
+    def welcome(self):
+        print("=== Manage Address Menu ===")
+
+    def show_menu(self):
+        print("1. View Address")
+        print("2. Add Address")
+        print("3. Modify Address")
+        print("4. Delete Address")
         print("5. Return to Customer Menu")
         self.menu_selection()
 

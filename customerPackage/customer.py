@@ -27,6 +27,7 @@ class Customer(User):
                     print(f"- ID: {product_id} - Type: {type} - Brand: {brand} - Price: ${price:.2f}")
         except Exception as e:
             print(f"Error fetching products: {e}")
+            self.conn.rollback()  # Reset connection after failure
 
     #Good
     def view_cards(self, cust_id = "cust_1"): 
@@ -39,7 +40,7 @@ class Customer(User):
                 SELECT * FROM customercreditcard
                 WHERE cust_id = %s
             """, (cust_id,))
-            cards = self.fetchall()
+            cards = self.cursor.fetchall()
             if not cards:
                 print(f"No cards found for customer ID '{cust_id}'.")
             else:
@@ -48,6 +49,7 @@ class Customer(User):
                     print(card)    
         except Exception as e:
             print(f"Error viewing cards: {e}")
+            self.conn.rollback()  # Reset connection after failure
             return None
 
     #Good
@@ -70,6 +72,7 @@ class Customer(User):
             self.conn.commit()  # commit transaction
         except Exception as e:
             print(f"Error adding card: {e}")
+            self.conn.rollback()  # Reset connection after failure
             return None
     
     #Good 
@@ -89,9 +92,10 @@ class Customer(User):
             print(new_card_number + "successfully modified in table.") 
             self.conn.commit() # commit transaction
         except: 
+            self.conn.rollback()  # Reset connection after failure
             return None
         
-    def delete_card(self, cardnumber):
+    def delete_card(self, card_name, cardnumber):
         """
         Delete card from customer info
         @param cardnumber: int, the card to be deleted
@@ -99,12 +103,14 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                         DELETE FROM customers (creditcard)
+                         DELETE FROM customercreditcard (card_name, cardnumber)
                          VALUES (%s)
-                         """, (cardnumber))
+                         WHERE card_name = %s
+                         """, (card_name, cardnumber))
             print(cardnumber + "successfully removed from table.")
             self.conn.commit() # commit transaction
         except:
+            self.conn.rollback()  # Reset connection after failure
             return None
 
     ### Modify Addresses
@@ -123,6 +129,7 @@ class Customer(User):
             print(address + "successfully added to table.")
             self.conn.commit() # commit transaction
         except:
+            self.conn.rollback()  # Reset connection after failure
             return None
         
     def delete_address(self, address): # address should be a csv, THIS FUNCTION IS 95% CORRECT
@@ -139,6 +146,7 @@ class Customer(User):
             print(address + "successfully removed from table.")
             self.conn.commit() # commit transaction
         except:
+            self.conn.rollback()  # Reset connection after failure
             return None
     
     def modify_address(self, address):
@@ -156,4 +164,5 @@ class Customer(User):
             print(address + "successfully modified in table.") 
             self.conn.commit() # commit transaction
         except: 
+            self.conn.rollback()  # Reset connection after failure
             return None
