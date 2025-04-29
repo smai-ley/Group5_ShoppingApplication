@@ -57,18 +57,18 @@ class Staff(User):
         Modifies a product's price in the product table
         @param prodNo: string, the product ID to be changed
         @param price: float
-        @return: none if unsuccessful
+        @return: None if unsuccessful
         """
         try:
             self.cursor.execute("""
                 UPDATE product
                 SET price = %s
                 WHERE product_id = %s
-            """, (prodNo, price))
-            print(prodNo + "costing " + {price} + " successfully modified in table.")
+            """, (price, prodNo))
             self.conn.commit()
+            print(f"{prodNo} costing {price} successfully modified in table.")
         except Exception as e:
-            self.conn.rollback()  # Reset connection after failure
+            self.conn.rollback()
             print("Error modifying product:", e)
             return None
         
