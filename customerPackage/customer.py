@@ -1,12 +1,15 @@
 # customer.py
 
+from itertools import product
+from math import prod
 from userPackage.user import User
 
 class Customer(User):
     # adds, deletes, and modifies product and price to products
     # adds stock to warehouse
 
-    def __init__(self):
+    def __init__(self, cust_id):
+        self.cust_id = cust_id
         super().__init__()
 
     def show_products(self):
@@ -30,16 +33,16 @@ class Customer(User):
             self.conn.rollback()  # Reset connection after failure
 
     #Good
-    def view_cards(self, cust_id = "cust_1"): 
+    def view_cards(self, cust_id): 
         """
         Views all cards associated with user 
         @return None
         """
         try:
             self.cursor.execute("""
-                SELECT * FROM customercreditcard
-                WHERE cust_id = %s
-            """, (cust_id,))
+                SELECT (card_name, card_number) FROM customercreditcard 
+                WHERE customer_id = %s
+            """, (cust_id))
             cards = self.cursor.fetchall()
             if not cards:
                 print(f"No cards found for customer ID '{cust_id}'.")
@@ -53,7 +56,7 @@ class Customer(User):
             return None
 
     #Good
-    def add_card(self, card_name, card_number, cust_id = "cust_1", address="123 Main Str., New York City, New York, 12345"): 
+    def add_card(self, card_name, card_number, cust_id, address="123 Main Str., New York City, New York, 12345"): 
         """
         Adds new card to customer info
         @param cust_id: str, customer ID
@@ -76,7 +79,7 @@ class Customer(User):
             return None
     
     #Good 
-    def modify_card(self, card_name, new_card_number, cust_id = "cust_1"): # Needs adjustment to support multiple cards
+    def modify_card(self, card_name, new_card_number): # Needs adjustment to support multiple cards
         """
         Modify card number in customer info
         @param cust_id: str or int, the customer ID whose card will be modified
@@ -87,15 +90,16 @@ class Customer(User):
             self.cursor.execute("""
                 UPDATE customercreditcard
                 SET card_number = %s
+                SET card_name = %s
                 WHERE card_name = %s
-                """, (new_card_number))
+                """, (new_card_number, card_name, card_name))
             print(new_card_number + "successfully modified in table.") 
             self.conn.commit() # commit transaction
         except: 
             self.conn.rollback()  # Reset connection after failure
             return None
         
-    def delete_card(self, card_name, cardnumber):
+    def delete_card(self, card_name):
         """
         Delete card from customer info
         @param cardnumber: int, the card to be deleted
@@ -103,11 +107,11 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                         DELETE FROM customercreditcard (card_name, cardnumber)
+                         DELETE FROM customercreditcard (card_name)
                          VALUES (%s)
                          WHERE card_name = %s
-                         """, (card_name, cardnumber))
-            print(cardnumber + "successfully removed from table.")
+                         """, (card_name))
+            print(card_name + "successfully removed from table.")
             self.conn.commit() # commit transaction
         except:
             self.conn.rollback()  # Reset connection after failure
@@ -123,7 +127,7 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                         INSERT INTO customers (creditcard)
+                         INSERT INTO customer (address)
                          VALUES (%s)
                          """, (address))
             print(address + "successfully added to table.")
@@ -140,7 +144,7 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                         DELETE FROM customers (address)
+                         DELETE FROM customer (address)
                          VALUES (%s)
                          """, (address))
             print(address + "successfully removed from table.")
@@ -151,15 +155,15 @@ class Customer(User):
     
     def modify_address(self, address):
         """
-        Modify card in customer info
-        @param cardnumber: int, the card to be changed
+        Modify address in customer info
+        @param address: str, the address to be changed
         @return: none if unsuccessful
         """
         try:
             self.cursor.execute("""
-                         UPDATE customers
-                         SET creditcard = %s
-                         WHERE id = %s
+                         UPDATE customer
+                         SET address = %s
+                         WHERE customer_id = %s
                          """, (address))
             print(address + "successfully modified in table.") 
             self.conn.commit() # commit transaction
@@ -183,6 +187,25 @@ class Customer(User):
                 print("\Customer Balance:")
                 for customer_id, balance in products:
                     print(f"- Customer ID: {customer_id} - Balance: ${balance}")
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print(f"Error fetching Stock: {e}")
+
+    def view_prodInfo(self, prodNo):
+        """
+        Shows ascii art for type of product
+        @param ProdNo: string
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.cursor.execute("""SELECT product_id, type, brand, description, price 
+                                    FROM product 
+                                    WHERE id = %s""", (prodNo))
+            products = self.cursor.fetchall()
+            print("\Customer Balance:")
+            for product_id, type, brand, description, price in products:
+                  print(f"- Product ID: {product_id} - Balance: ${balance}")
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
             print(f"Error fetching Stock: {e}")
