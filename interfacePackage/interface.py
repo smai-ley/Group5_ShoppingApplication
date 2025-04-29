@@ -138,13 +138,13 @@ class CustInterface(Interface):
                     prodNo = input("Show details for Product ID: ")
                     self.custMember.view_prodInfo(prodNo)
                 elif (userInput == 3):
-                    return ShopCart()
+                    return ShopCart(self.cust_id)
                 elif (userInput == 4):
-                    return Checkout()
+                    return Checkout(self.cust_id)
                 elif (userInput == 5):
-                    return Card()
+                    return Card(self.cust_id)
                 elif (userInput == 6):
-                    return Address()
+                    return Address(self.cust_id)
                 elif (userInput == 7):
                     self.custMember.view_balance()
                 elif (userInput == 8):
@@ -161,8 +161,9 @@ class CustInterface(Interface):
 
 class Card(CustInterface):
 
-    def __init__(self):
-        self.custMember = Customer() # Customer connection to DB from Customer Class
+    def __init__(self, cust_id):
+        self.cust_id = cust_id
+        self.custMember = Customer(cust_id) # Customer connection to DB from Customer Class
         self.shopCart = ShoppingCart()
         self.welcome()
         self.show_menu()
@@ -186,11 +187,16 @@ class Card(CustInterface):
                 if (userInput == 1):
                     self.custMember.view_cards()
                 elif (userInput == 2):
-                    self.custMember.add_card()
+                    card_name = input("Nickname for new card: ")
+                    card_number = input("New Card Numbers: ")
+                    self.custMember.add_card(card_name, card_number, self.cust_id)
                 elif (userInput == 3):
-                    self.custMember.modify_card()
+                    card_name = input("New Nickname for card: ")
+                    card_number = input("New Card Numbers: ")
+                    self.custMember.modify_card(card_name, card_number)
                 elif (userInput == 4):
-                    self.custMember.delete_card()
+                    card_name = input("Nickname of Card to be Removed: ")
+                    self.custMember.delete_card(card_name)
                 elif (userInput == 5):
                     print("\n")
                     print("Closing Card Menu...")
@@ -205,8 +211,9 @@ class Card(CustInterface):
 
 class Address(CustInterface):
 
-    def __init__(self):
-        self.staffMember = Customer() # Staff connection to DB from Staff Class
+    def __init__(self, cust_id):
+        self.cust_id = cust_id
+        self.staffMember = Customer(cust_id) # Staff connection to DB from Staff Class
         self.welcome()
         self.show_menu()
 
@@ -227,16 +234,13 @@ class Address(CustInterface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.custMember.view_cards()
+                    self.custMember.view_address() ######################### DNE yet
                 elif (userInput == 2):
-                    cardName = input("Nickname for Card: ")
-                    cardName = input("Nickname for Card: ")
-                    cardName = input("Nickname for Card: ")
-                    self.custMember.add_card()
+                    self.custMember.add_address()
                 elif (userInput == 3):
-                    self.custMember.modify_card()
+                    self.custMember.modify_address()
                 elif (userInput == 4):
-                    self.custMember.delete_card()
+                    self.custMember.delete_address()
                 elif (userInput == 5):
                     print("\n")
                     print("Closing Address Menu...")
@@ -251,8 +255,9 @@ class Address(CustInterface):
 
 class ShopCart(CustInterface):
 
-    def __init__(self):
-        self.staffMember = Customer()
+    def __init__(self, cust_id):
+        self.cust_id = cust_id
+        self.staffMember = Customer(cust_id)
         self.shopCart = ShoppingCart()
         self.welcome()
         self.show_menu()
@@ -300,7 +305,8 @@ class ShopCart(CustInterface):
 
 class Checkout(Interface):
 
-    def __init__(self):
+    def __init__(self, cust_id):
+        self.cust_id = cust_id
         self.shopCart = ShoppingCart()
         self.welcome()
         self.show_menu()
