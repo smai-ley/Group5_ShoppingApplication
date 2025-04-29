@@ -185,10 +185,10 @@ class Card(CustInterface):
             try:
                 userInput = int(input("Menu Index: "))
                 if (userInput == 1):
-                    self.custMember.view_cards()
+                    self.custMember.view_cards(self.cust_id)
                 elif (userInput == 2):
                     card_name = input("Nickname for new card: ")
-                    card_number = input("New Card Numbers: ")
+                    card_number = input("New Card Numbers (Format: XXXX XXXX XXXX XXXX): ")
                     self.custMember.add_card(card_name, card_number, self.cust_id)
                 elif (userInput == 3):
                     card_name = input("New Nickname for card: ")
