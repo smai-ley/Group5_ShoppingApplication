@@ -10,7 +10,7 @@ class User:
             port="5432",
             database="postgres",
             user="postgres",
-            password="matchaluvr")
+            password="cookie")
          self.cursor = self.conn.cursor()
    
     def logOut(self):

@@ -33,24 +33,6 @@ class Staff(User):
         except:
             self.conn.rollback()  # Reset connection after failure
             return None
-        
-    def delete_product(self, prodNo):
-        """
-        Removes a product from the product table 
-        @param prodNo: string, the product_id of the product to be removed
-        @return: None if unsuccessful
-        """
-        try:
-            self.cursor.execute("""
-                DELETE FROM product
-                WHERE product_id = %s
-            """, (prodNo,))
-            self.conn.commit()
-            print(prodNo + " successfully removed from table.")
-        except Exception as e:
-            self.conn.rollback()  # Reset connection after failure
-            print("Error deleting product:", e)
-            return None
     
     def modify_product(self, prodNo, price):
         """
@@ -70,7 +52,26 @@ class Staff(User):
         except Exception as e:
             self.conn.rollback()
             print("Error modifying product:", e)
+            return None    
+    
+    def delete_product(self, prodNo):
+        """
+        Removes a product from the product table 
+        @param prodNo: string, the product_id of the product to be removed
+        @return: None if unsuccessful
+        """
+        try:
+            self.cursor.execute("""
+                DELETE FROM product
+                WHERE product_id = %s
+            """, (prodNo,))
+            self.conn.commit()
+            print(prodNo + " successfully removed from table.")
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print("Error deleting product:", e)
             return None
+    
         
     def add_stock(self, prodNo, qty, warehouse_id = "wh_1"): # Remove prodNo depending on relational schema
         """
@@ -84,7 +85,7 @@ class Staff(User):
                          INSERT INTO stock (product_id, quantity, warehouse_id)
                          VALUES (%s, %s, %s)
                          """, (prodNo, qty, warehouse_id))
-            print(qty + " of " + prodNo + " successfully added to table.")
+            print(f"{qty} of {prodNo} successfully added to table.")
             self.conn.commit() # commit transaction
         except:
             self.conn.rollback()  # Reset connection after failure

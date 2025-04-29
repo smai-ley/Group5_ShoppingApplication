@@ -79,24 +79,26 @@ class Customer(User):
             return None
     
     #Good 
-    def modify_card(self, card_name, new_card_name, new_card_number): # Needs adjustment to support multiple cards
+    def modify_card(self, card_name, new_card_name, new_card_number):
         """
-        Modify card number in customer info
-        @param cust_id: str or int, the customer ID whose card will be modified
-        @param new_cardnumber: int or str, the new card number
+        Modify card info in customercreditcard table
+        @param card_name: str, the existing card name to look for
+        @param new_card_name: str, the new name to set
+        @param new_card_number: str or int, the new card number to set
         @return: None if unsuccessful
         """
         try:
             self.cursor.execute("""
                 UPDATE customercreditcard
-                SET card_number = %s
-                SET card_name = %s
+                SET card_number = %s,
+                    card_name = %s
                 WHERE card_name = %s
-                """, (new_card_number, card_name, card_name))
-            print(new_card_number + "successfully modified in table.") 
-            self.conn.commit() # commit transaction
-        except: 
-            self.conn.rollback()  # Reset connection after failure
+            """, (new_card_number, new_card_name, card_name))
+            self.conn.commit()
+            print(f"Card '{card_name}' updated to '{new_card_name}' with number {new_card_number}.")
+        except Exception as e:
+            self.conn.rollback()
+            print("Error modifying card:", e)
             return None
         
     def delete_card(self, card_name):

@@ -14,9 +14,9 @@ class Interface:
         
     def show_menu(self):
         print("=== Menu ===")
-        print("1. Staff")
-        print("2. Customer")
-        print("3. End Session")
+        print("1. Staff") # FULLY COMPLETE
+        print("2. Customer") 
+        print("3. End Session") # FULLY COMPLETE
         self.menu_selection()
 
     def menu_selection(self):
@@ -45,7 +45,7 @@ class Interface:
             except ValueError:
                 print("Invalid input. Please type either '1' - Staff, '2' - Customer, '3' - End session.")        
 
-########################################## STAFF INTERFACE SUBCLASS #################################################
+############################################### STAFF INTERFACE SUBCLASS #################################################
 
 class StaffInterface(Interface):
 
@@ -65,7 +65,7 @@ class StaffInterface(Interface):
         print("4. Delete Products and Price") #GOOD
         print("5. View Stock Inventory") #GOOD
         print("6. Add Stock to Warehouse") #GOOD
-        print("7. End Staff Session") #GOOD
+        print("7. Log Out") #GOOD
         self.menu_selection()
 
     def menu_selection(self):
@@ -75,26 +75,17 @@ class StaffInterface(Interface):
                 if (userInput == 1):
                     self.staffMember.show_products()
                 elif (userInput == 2):
-                    prodNo = input("Product ID: ")
-                    price = float(input("Price: "))
-                    self.staffMember.add_product(prodNo, price)
+                    self.staffMember.add_product(input("Product ID: "), float(input("Price: ")))
                 elif (userInput == 3):
-                    prodNo = input("Product ID: ")
-                    price = float(input("Price: "))
-                    self.staffMember.modify_product(prodNo, price)
+                    self.staffMember.modify_product(input("Product ID: "), float(input("Price: ")))
                 elif (userInput == 4):
-                    prodNo = input("Product ID to be deleted: ")
-                    self.staffMember.delete_product(prodNo)
+                    self.staffMember.delete_product(input("Product ID to be deleted: "))
                 elif (userInput == 5):
                     self.staffMember.show_stock()
                 elif (userInput == 6):
-                    prodNo = input("Product[Stock] ID: ")
-                    qty = int(input("Quantity: "))
-                    wh_id = input("Warehouse ID: ")
-                    self.staffMember.add_stock(prodNo, qty, wh_id)
+                    self.staffMember.add_stock(input("Product[Stock] ID: "), int(input("Quantity: ")), input("Warehouse ID: "))
                 elif (userInput == 7):
-                    print("\n")
-                    print("Ending Staff Session...")
+                    print("\nEnding Staff Session...\t")
                     self.bear()
                     print("\n")
                     return Interface()
@@ -109,7 +100,7 @@ class CustInterface(Interface):
     def __init__(self, cust_id):
         self.cust_id = cust_id
         self.custMember = Customer(cust_id) # Customer connection to DB from Customer Class
-        self.shopCart = ShoppingCart()
+        self.shopCart = ShoppingCart(cust_id)
         self.welcome()
         self.show_menu()
 
@@ -125,7 +116,7 @@ class CustInterface(Interface):
         print("5. Manage Credit Cards") #good
         print("6. Manage Addresses") #good
         print("7. View Balance") #good 
-        print("8. Logout") #good
+        print("8. Log Out") #good
         self.menu_selection()
 
     def menu_selection(self):
@@ -135,8 +126,7 @@ class CustInterface(Interface):
                 if (userInput == 1):
                     self.custMember.show_products()
                 elif (userInput == 2):
-                    prodNo = input("Show details for Product ID: ")
-                    self.custMember.view_prodInfo(prodNo)
+                    self.custMember.view_prodInfo(input("Show details for Product ID: "))
                 elif (userInput == 3):
                     return ShopCart(self.cust_id)
                 elif (userInput == 4):
@@ -148,9 +138,7 @@ class CustInterface(Interface):
                 elif (userInput == 7):
                     self.custMember.view_balance()
                 elif (userInput == 8):
-                    print("\n")
-                    print("Ending Customer Session...")
-                    print("\n")
+                    print("\nEnding Customer Session...\n")
                     return Interface()
                 else:
                     print("Invalid input.")
@@ -164,7 +152,7 @@ class Card(CustInterface):
     def __init__(self, cust_id):
         self.cust_id = cust_id
         self.custMember = Customer(cust_id) # Customer connection to DB from Customer Class
-        self.shopCart = ShoppingCart()
+        self.shopCart = ShoppingCart(cust_id)
         self.welcome()
         self.show_menu()
 
@@ -187,21 +175,14 @@ class Card(CustInterface):
                 if (userInput == 1):
                     self.custMember.view_cards(self.cust_id)
                 elif (userInput == 2):
-                    card_name = input("Nickname for new card: ")
-                    card_number = input("New Card Numbers (Format: XXXX XXXX XXXX XXXX): ")
-                    self.custMember.add_card(card_name, card_number, self.cust_id)
+                    self.custMember.add_card(input("Nickname for new card: "), input("New Card Numbers (Format: XXXX XXXX XXXX XXXX): "), self.cust_id)
                 elif (userInput == 3):
-                    card_name = input("New Nickname for card: ")
-                    card_number = input("New Card Numbers: ")
-                    self.custMember.modify_card(card_name, card_number)
+                    self.custMember.modify_card(input("Card to be Modified: "), input("New Nickname: "), input("New Card Number: "))
                 elif (userInput == 4):
-                    card_name = input("Nickname of Card to be Removed: ")
-                    self.custMember.delete_card(card_name)
+                    self.custMember.delete_card(input("Nickname of Card to be Removed: "))
                 elif (userInput == 5):
-                    print("\n")
-                    print("Closing Card Menu...")
-                    print("\n")
-                    return CustInterface()
+                    print("\nClosing Card Menu...\n")
+                    return CustInterface(self.cust_id)
                 else:
                     print("Invalid input.")
             except ValueError:
@@ -242,10 +223,8 @@ class Address(CustInterface):
                 elif (userInput == 4):
                     self.custMember.delete_address()
                 elif (userInput == 5):
-                    print("\n")
-                    print("Closing Address Menu...")
-                    print("\n")
-                    return CustInterface()
+                    print("\nClosing Address Menu...\n")
+                    return CustInterface(self.cust_id)
                 else:
                     print("Invalid input.")
             except ValueError:
@@ -263,8 +242,7 @@ class ShopCart(CustInterface):
         self.show_menu()
 
     def welcome(self):
-        print("\n")
-        print("=== Manage Shopping Cart Menu ===")
+        print("\n=== Manage Shopping Cart Menu ===")
 
     def show_menu(self):
         print("1. View Cart") #good IT
@@ -292,10 +270,8 @@ class ShopCart(CustInterface):
                     qty = input("Quantity: ")
                     self.shopCart.change_quantity(prodNo, qty)
                 elif (userInput == 5):
-                    print("\n")
-                    print("Closing Card Menu...")
-                    print("\n")
-                    return CustInterface()
+                    print("\nClosing Card Menu...\n")
+                    return CustInterface(self.cust_id)
                 else:
                     print("Invalid input.")
             except ValueError:
@@ -307,13 +283,12 @@ class Checkout(Interface):
 
     def __init__(self, cust_id):
         self.cust_id = cust_id
-        self.shopCart = ShoppingCart()
+        self.shopCart = ShoppingCart(cust_id)
         self.welcome()
         self.show_menu()
 
     def welcome(self):
-        print("\n")
-        print("=== Checkout Menu ===")
+        print("\n=== Checkout Menu ===")
         self.shopCart.view_cart()
         
     def show_menu(self):
@@ -335,10 +310,8 @@ class Checkout(Interface):
                     self.shopCart.checkout()
                     self.cart_art()
                 elif (userInput == 4):
-                    print("\n")
-                    print("Closing Checkout Menu...")
-                    print("\n")
-                    return CustInterface()
+                    print("\nClosing Checkout Menu...\n")
+                    return CustInterface(self.cust_id)
                 else:
                     print("Invalid input.")
             except ValueError:

@@ -1,7 +1,8 @@
 # shoppingCart.py
 
 class ShoppingCart:
-    def __init__(self):
+    def __init__(self, user_id):
+        self.user_id = user_id
         self.items = {}  # key: product_id, value: quantity
 
     def add_item(self, product_id, quantity=1):
