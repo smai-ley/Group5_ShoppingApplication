@@ -10,7 +10,23 @@ class Customer(User):
         super().__init__("CUSTOMER")
 
     def show_products(self):
-        return super().show_products()
+        """
+        Browse products in the products table
+        @param none
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.cursor.execute("SELECT product_id, type, brand, price FROM product")
+            products = self.cursor.fetchall()
+            if not products:
+                print("No products available.")
+            else:
+                print("\nAvailable Products:")
+                for product_id, type, brand, price in products:
+                    print(f"- ID: {product_id} - Type: {type} - Brand: {brand} - Price: ${price:.2f}")
+        except Exception as e:
+            print(f"Error fetching products: {e}")
 
     #Good
     def view_cards(self, cust_id = "cust_1"): 
@@ -19,7 +35,7 @@ class Customer(User):
         @return None
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                 SELECT * FROM customercreditcard
                 WHERE cust_id = %s
             """, (cust_id,))
@@ -45,13 +61,13 @@ class Customer(User):
         @return: None if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                 INSERT INTO customercreditcard (cust_id, card_name, card_number, payment_address)
                 VALUES (%s, %s, %s, %s)
             """, (cust_id, card_name, card_number, address))
         
             print(f"{card_name} + {card_number} successfully added to table.")
-            self.commit()  # commit transaction
+            self.conn.commit()  # commit transaction
         except Exception as e:
             print(f"Error adding card: {e}")
             return None
@@ -65,13 +81,13 @@ class Customer(User):
         @return: None if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                 UPDATE customercreditcard
                 SET card_number = %s
                 WHERE card_name = %s
                 """, (new_card_number))
             print(new_card_number + "successfully modified in table.") 
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except: 
             return None
         
@@ -82,12 +98,12 @@ class Customer(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          DELETE FROM customers (creditcard)
                          VALUES (%s)
                          """, (cardnumber))
             print(cardnumber + "successfully removed from table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
 
@@ -100,12 +116,12 @@ class Customer(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          INSERT INTO customers (creditcard)
                          VALUES (%s)
                          """, (address))
             print(address + "successfully added to table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
         
@@ -116,12 +132,12 @@ class Customer(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          DELETE FROM customers (address)
                          VALUES (%s)
                          """, (address))
             print(address + "successfully removed from table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
     
@@ -132,12 +148,12 @@ class Customer(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          UPDATE customers
                          SET creditcard = %s
                          WHERE id = %s
                          """, (address))
             print(address + "successfully modified in table.") 
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except: 
             return None

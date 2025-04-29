@@ -21,12 +21,12 @@ class Staff(User):
         @return: none if unsuccessful
         """
         try:
-            self.conn.execute("""
+            self.cursor.execute("""
                          INSERT INTO product (product_id, price)
                          VALUES (%s, %s)
                          """, (prodNo, price))
             print(prodNo + "successfully added to table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
         
@@ -37,31 +37,32 @@ class Staff(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          DELETE FROM product
                          WHERE id = %s
                          """, (prodNo,))
             print(prodNo + "successfully removed from table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
     
     def modify_product(self, prodNo, price):
         """
-        Modifies a product and price in the product table
-        @param prodNo: string, the product to be changed
+        Modifies a product's price in the product table
+        @param prodNo: string, the product ID to be changed
         @param price: float
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
-                         UPDATE product
-                         SET product_id = %s, price = %s
-                         WHERE id = %s
-                         """, (prodNo, price))
-            print(prodNo + "successfully modified in table.")
-            self.commit() # commit transaction
-        except: 
+            self.cursor.execute("""
+                UPDATE product
+                SET price = %s
+                WHERE product_id = %s
+            """, (prodNo, price))
+            print(prodNo + "costing " + {price} + " successfully modified in table.")
+            self.conn.commit()
+        except Exception as e:
+            print("Error modifying product:", e)
             return None
         
     def add_stock(self, prodNo, qty, warehouse_id = "wh_1"): # Remove prodNo depending on relational schema
@@ -72,12 +73,12 @@ class Staff(User):
         @return: none if unsuccessful
         """
         try:
-            self.execute("""
+            self.cursor.execute("""
                          INSERT INTO stock (product_id, quantity)
                          VALUES (%s, %s, %s)
                          """, (prodNo, qty, warehouse_id))
             print(qty + " of " + prodNo + "successfully added to table.")
-            self.commit() # commit transaction
+            self.conn.commit() # commit transaction
         except:
             return None
 

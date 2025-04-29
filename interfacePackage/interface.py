@@ -49,7 +49,7 @@ class Interface:
 class StaffInterface(Interface):
 
     def __init__(self):
-        self.staffMember = Staff() # Staff connection to DB from Staff Class
+        staffMember = Staff() # Staff connection to DB from Staff Class
         self.welcome()
         self.show_menu()
 
