@@ -60,7 +60,7 @@ class StaffInterface(Interface):
         print("2. Add Products and Price")
         print("3. Modify Products and Price")
         print("4. Delete Products and Price")
-        print("5. View Stock")
+        print("5. View Stock Inventory")
         print("6. Add Stock to Warehouse")
         print("7. End Staff Session")
         self.menu_selection()
@@ -84,9 +84,11 @@ class StaffInterface(Interface):
                     self.staffMember.delete_product(prodNo)
                 elif (userInput == 5):
                     prodNo = input("Product[Stock] ID: ")
-                    self.staffMember.add_stock(prodNo)
+                    qty = input("Quantity: ")
+                    wh_id = input("Warehouse ID: ")
+                    self.staffMember.add_stock(prodNo, qty, wh_id)
                 elif (userInput == 6):
-                    self.staffMember.show_products()
+                    self.staffMember.show_stock()
                 elif (userInput == 7):
                     print("\n")
                     print("Ending Staff Session...")
@@ -102,7 +104,8 @@ class StaffInterface(Interface):
 
 class CustInterface(Interface):
     def __init__(self):
-        self.custMember = Customer() # Customer connection to DB from Customer Class
+        cust_id = input("Enter Customer ID: ")
+        self.custMember = Customer(cust_id) # Customer connection to DB from Customer Class
         self.welcome()
         self.show_menu()
 
@@ -114,10 +117,10 @@ class CustInterface(Interface):
         print("2. Add Product to Cart")
         print("3. View Cart")
         print("4. Checkout")
-        print("5. Manage Credit Cards")
-        print("6. Manage Addresses")
-        print("7. View Balance")
-        print("8. Logout")
+        print("5. Manage Credit Cards") #good
+        print("6. Manage Addresses") #good
+        print("7. View Balance") #good 
+        print("8. Logout") #good
         self.menu_selection()
 
     def menu_selection(self):
@@ -137,7 +140,7 @@ class CustInterface(Interface):
                 elif (userInput == 6):
                     return Address()
                 elif (userInput == 7):
-                    print("7")
+                    self.custMember.view_balance()
                 elif (userInput == 8):
                     print("\n")
                     print("Ending Customer Session...")
@@ -161,10 +164,10 @@ class Card(Interface):
         print("=== Manage Cards Menu ===")
 
     def show_menu(self):
-        print("1. View Cards")
-        print("2. Add Credit Card")
-        print("3. Modify Credit Card")
-        print("4. Delete Credit Card")
+        print("1. View Cards") #good IT
+        print("2. Add Credit Card") #good IT
+        print("3. Modify Credit Card") #good IT
+        print("4. Delete Credit Card") #good IT
         print("5. Return to Customer Menu")
         self.menu_selection()
 
@@ -182,7 +185,7 @@ class Card(Interface):
                     self.custMember.delete_card()
                 elif (userInput == 5):
                     print("\n")
-                    print("Ending Staff Session...")
+                    print("Closing Card Menu...")
                     print("\n")
                     return CustInterface()
                 else:
@@ -223,7 +226,7 @@ class Address(Interface):
                     self.custMember.delete_card()
                 elif (userInput == 5):
                     print("\n")
-                    print("Ending Staff Session...")
+                    print("Closing Address Menu...")
                     print("\n")
                     return CustInterface()
                 else:

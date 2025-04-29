@@ -81,7 +81,7 @@ class Staff(User):
         """
         try:
             self.cursor.execute("""
-                         INSERT INTO stock (product_id, quantity)
+                         INSERT INTO stock (product_id, quantity, warehouse_id)
                          VALUES (%s, %s, %s)
                          """, (prodNo, qty, warehouse_id))
             print(qty + " of " + prodNo + " successfully added to table.")

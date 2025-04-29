@@ -6,8 +6,8 @@ class Customer(User):
     # adds, deletes, and modifies product and price to products
     # adds stock to warehouse
 
-    def __init__(self):
-        super().__init__("CUSTOMER")
+    def __init__(self, cust_id):
+        super().__init__(cust_id)
 
     def show_products(self):
         """
@@ -30,9 +30,9 @@ class Customer(User):
             self.conn.rollback()  # Reset connection after failure
 
     #Good
-    def view_cards(self, cust_id = "cust_1"): 
+    def view_cards(self, cust_id): 
         """
-        Views all cards associated with user (cust_1)
+        Views all cards associated with user 
         @return None
         """
         try:
@@ -76,7 +76,7 @@ class Customer(User):
             return None
     
     #Good 
-    def modify_card(self, card_name, new_card_number, cust_id ="cust_1"): # Needs adjustment to support multiple cards
+    def modify_card(self, card_name, new_card_number, cust_id): # Needs adjustment to support multiple cards
         """
         Modify card number in customer info
         @param cust_id: str or int, the customer ID whose card will be modified
@@ -166,3 +166,23 @@ class Customer(User):
         except: 
             self.conn.rollback()  # Reset connection after failure
             return None
+
+    def view_balance(self):
+        """
+        Show customer balance
+        @param none
+        @return none
+        @except error e if unsuccessful
+        """
+        try:
+            self.cursor.execute("SELECT customer_id, balance FROM customer")
+            products = self.cursor.fetchall()
+            if not products:
+                print("No balance available.")
+            else:
+                print("\Customer Balance:")
+                for customer_id, balance in products:
+                    print(f"- Customer ID: {customer_id} - Balance: ${balance}")
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print(f"Error fetching Stock: {e}")
