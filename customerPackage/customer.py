@@ -1,7 +1,6 @@
-# customer.py
+﻿# customer.py
 
-from itertools import product
-from math import prod
+from additionalPackage.icon import Icon
 from userPackage.user import User
 
 class Customer(User):
@@ -10,6 +9,7 @@ class Customer(User):
 
     def __init__(self, cust_id):
         self.cust_id = cust_id
+        self.printer = Icon()
         super().__init__()
 
     def show_products(self):
@@ -20,19 +20,18 @@ class Customer(User):
         @except error e if unsuccessful
         """
         try:
-            self.cursor.execute("SELECT product_id, type, brand, price FROM product")
+            self.cursor.execute("SELECT product_id, type, price FROM product")
             products = self.cursor.fetchall()
             if not products:
                 print("No products available.")
             else:
-                print("\nAvailable Products:")
-                for product_id, type, brand, price in products:
-                    print(f"- ID: {product_id} - Type: {type} - Brand: {brand} - Price: ${price:.2f}")
+                print("\n ⁺˚⋆｡°✩₊ Products Available: ⁺˚⋆｡°✩₊\n")
+                for product_id, type, price in products:
+                    print(f"⋆ ID: {product_id} ⋆ Category: {type} ⋆ Price: ${price:.2f}")
         except Exception as e:
             print(f"Error fetching products: {e}")
             self.conn.rollback()  # Reset connection after failure
 
-    #Good
     def view_cards(self, cust_id): 
         """
         Views all cards associated with user 
@@ -40,22 +39,22 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                SELECT (card_name, card_number) FROM customercreditcard 
+                SELECT card_name, card_number FROM customercreditcard 
                 WHERE customer_id = %s
             """, (cust_id,))
             cards = self.cursor.fetchall()
             if not cards:
                 print(f"No cards found for customer ID '{cust_id}'.")
             else:
-                print(f"Cards for customer ID '{cust_id}':")
-                for card in cards:
-                    print(card)    
+                print(f"\n{cust_id}'s Cards:")
+                for card_name, card_number in cards:
+                    print(f"* Nickname: {card_name}\n* Card Number: {card_number}")
+                print("\n")
         except Exception as e:
             print(f"Error viewing cards: {e}")
             self.conn.rollback()  # Reset connection after failure
             return None
 
-    #Good
     def add_card(self, card_name, card_number, cust_id, address="123 Main Str., New York City"): 
         """
         Adds new card to customer info
@@ -77,8 +76,7 @@ class Customer(User):
             print(f"Error adding card: {e}")
             self.conn.rollback()  # Reset connection after failure
             return None
-    
-    #Good 
+   
     def modify_card(self, card_name, new_card_name, new_card_number):
         """
         Modify card info in customercreditcard table
@@ -120,46 +118,85 @@ class Customer(User):
 
     ### Modify Addresses
         
-    def add_address(self, address, user_id): # address should be a csv string, THIS FUNCTION IS 85% CORRECT
+    def add_address(self, address_id, address_text, del_add, pay_add, user_id): 
         """
-        Adds new address to customer info
-        @param address: string, the address to be added
-        @return: none if unsuccessful
-        """
-        try:
-            self.cursor.execute("""
-                         INSERT INTO customer (address, customer_id)
-                         VALUES (%s)
-                         """, (address, user_id))
-            print(address + "successfully added to table.")
-            self.conn.commit() # commit transaction
-        except:
-            self.conn.rollback()  # Reset connection after failure
-            return None
-     
-    def modify_address(self, old_address, new_address, user_id):
-        """
-        Modify an address in the customer address table
-        @param old_address: str, the current address to replace
-        @param new_address: str, the new address to set
-        @param user_id: str or int, the customer identifier
+        Adds a new address to the customer info table. If delivery or payment flag is set to True, it resets those flags for other addresses of the same user.
+        @param address_id: string or int, the new address ID
+        @param address_text: string, the address text
+        @param del_add: any type (will be cast to boolean), True if delivery address
+        @param pay_add: any type (will be cast to boolean), True if payment address
+        @param user_id: string or int, the customer ID
         @return: None if unsuccessful
         """
         try:
+            del_add = bool(del_add)
+            pay_add = bool(pay_add)
+            if del_add:
+                self.cursor.execute("""
+                    UPDATE address
+                    SET delivery_address = FALSE
+                    WHERE customer_id = %s
+                """, (user_id,))
+            if pay_add:
+                self.cursor.execute("""
+                    UPDATE address
+                    SET payment_address = FALSE
+                    WHERE customer_id = %s
+                """, (user_id,))
             self.cursor.execute("""
-                UPDATE customeraddress
-                SET address = %s
-                WHERE address = %s
-                  AND customer_id = %s
-            """, (new_address, old_address, user_id))
+                INSERT INTO address (address_id, address_text, delivery_address, payment_address, customer_id)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (address_id, address_text, del_add, pay_add, user_id))
+            print(address_id + " successfully added to table.")
+            self.conn.commit()  # commit transaction
+        except Exception as e:
+            self.conn.rollback()  # Reset connection after failure
+            print(f"Error adding address: {e}")
+            return None
+     
+    def modify_address(self, address_id, address_text, del_add, pay_add, user_id): 
+        """
+        Modifies an existing address in the customer info table.
+        If delivery or payment flag is set to True, it resets those flags for other addresses of the same user.
+
+        @param address_id: string or int, the ID of the address to modify
+        @param address_text: string, the new address text
+        @param del_add: any type (cast to bool), True if delivery address
+        @param pay_add: any type (cast to bool), True if payment address
+        @param user_id: string or int, the customer ID linked to this address
+        @return: None if unsuccessful
+        """
+        try: 
+            del_add = bool(del_add)
+            pay_add = bool(pay_add)
+            if del_add:
+                self.cursor.execute("""
+                    UPDATE address
+                    SET delivery_address = FALSE
+                    WHERE customer_id = %s AND address_id != %s
+                """, (user_id, address_id))
+            if pay_add:
+                self.cursor.execute("""
+                    UPDATE address
+                    SET payment_address = FALSE
+                    WHERE customer_id = %s AND address_id != %s
+                """, (user_id, address_id))
+            self.cursor.execute("""
+                UPDATE address
+                SET address_text = %s,
+                    delivery_address = %s,
+                    payment_address = %s,
+                    customer_id = %s
+                WHERE address_id = %s
+            """, (address_text, del_add, pay_add, user_id, address_id))
+            print(address_id + " successfully modified in table.")
             self.conn.commit()
-            print(f"{new_address} successfully modified in table.")
         except Exception as e:
             self.conn.rollback()
-            print("Error modifying address:", e)
+            print(f"Error modifying address: {e}")
             return None
 
-    def delete_address(self, address, user_id):
+    def delete_address(self, address_id, user_id):
         """
         Delete address from customer info
         @param address: string, the address to be deleted
@@ -167,12 +204,12 @@ class Customer(User):
         """
         try:
             self.cursor.execute("""
-                DELETE FROM customer
-                WHERE address = %s
+                DELETE FROM address
+                WHERE address_id = %s
                     AND customer_id = %s                
-            """, (address, user_id))
+            """, (address_id, user_id))
             self.conn.commit()
-            print(address + " successfully removed from table.")
+            print(address_id + " successfully removed from table.")
         except Exception as e:
             self.conn.rollback()
             print("Error deleting address:", e)
@@ -186,14 +223,15 @@ class Customer(User):
         @except error e if unsuccessful
         """
         try:
-            self.cursor.execute("SELECT customer_id, address FROM customer WHERE customer_id = %s", (user_id,))
-            products = self.cursor.fetchall()
-            if not address:
+            self.cursor.execute("""SELECT  address_id, address_text, delivery_address, payment_address 
+                                FROM address 
+                                WHERE customer_id = %s""", (user_id,))
+            addresses = self.cursor.fetchall()
+            if not addresses:
                 print("No address available.")
             else:
-                print("Addresses:")
-                for customer_id, address in products:
-                    print(f"- Customer ID: {customer_id} - Balance: ${address}")
+                for address_id, address_text, delivery_address, payment_address in addresses:
+                    print(f"\nAddresses for {user_id}:\n Address ID: {address_id}\n Address Line: {address_text}\n Delivery Address: {delivery_address}\n Payment_Address: {payment_address}\n")
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
             print(f"Error fetching Addresses: {e}")
@@ -206,14 +244,17 @@ class Customer(User):
         @except error e if unsuccessful
         """
         try:
-            self.cursor.execute("SELECT customer_id, balance FROM customer WHERE customer_id = %s", (user_id,))
-            products = self.cursor.fetchall()
-            if not products:
+            self.cursor.execute("""SELECT customer_id, balance 
+                                FROM customer 
+                                WHERE customer_id = %s""", 
+                                (user_id,))
+            balances = self.cursor.fetchall()
+            if not balances:
                 print("No balance available.")
             else:
-                print("Customer Balance:")
-                for customer_id, balance in products:
-                    print(f"- Customer ID: {customer_id} - Balance: ${balance}")
+                print(f"\n{user_id} Balance:")
+                for customer_id, balance in balances:
+                    print(f"* Outstanding Payments: ${balance}\n")
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
             print(f"Error fetching Balance: {e}")
@@ -228,11 +269,13 @@ class Customer(User):
         try:
             self.cursor.execute("""SELECT product_id, type, brand, description, price 
                                     FROM product 
-                                    WHERE id = %s""", (prodNo))
+                                    WHERE product_id = %s""", (prodNo,))
             products = self.cursor.fetchall()
-            print("\Customer Balance:")
-            for product_id, type, brand, description, price in products:
-                  print(f"- Product ID: {product_id} - Balance: ${price}")
+            print("\n.˚○ • °  Product Details .˚○ • ° \n")
+            for product_id, prodType, brand, description, price in products:
+                  print(f"⋆ Product ID: {product_id}\n⋆ Category: {prodType}\n⋆ Description: {brand} {description}\n⋆ Price: ${price}")
+            self.printer.print_art(prodType)
         except Exception as e:
             self.conn.rollback()  # Reset connection after failure
-            print(f"Error fetching Product Ascii: {e}")
+            print(f"Error fetching Product Info: {e}")
+       
