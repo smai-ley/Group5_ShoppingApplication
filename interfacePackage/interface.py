@@ -1,5 +1,6 @@
 ﻿#interface.py
 
+from psycopg2.sql import NULL
 from additionalPackage.icon import Icon
 from customerPackage.customer import Customer
 from orderPackage.shoppingCart import ShoppingCart
@@ -90,10 +91,11 @@ class CustInterface(Interface):
     def __init__(self, user_id):
         self.user_id = user_id
         self.printer = Icon()
-        self.custMember = Customer(user_id) # Customer connection to DB from Customer Class
-        self.shopCart = ShoppingCart(user_id)
+        self.custMember = Customer(user_id)  # Customer connection to DB from Customer Class
+        self.shoppyCart = ShoppingCart(user_id)  # Pass self.items here
         self.welcome()
         self.show_menu()
+        
 
     def welcome(self):
         print("\n")
@@ -121,8 +123,7 @@ class CustInterface(Interface):
                 elif (userInput == 3):
                     return ShopCart(self.user_id)
                 elif (userInput == 4):
-                    self.ShopCart.checkout(self.user_id)
-                    self.cart_art()
+                    self.shoppyCart.checkout()
                 elif (userInput == 5):
                     return Card(self.user_id)
                 elif (userInput == 6):
@@ -137,25 +138,7 @@ class CustInterface(Interface):
                     print("Invalid input.")
             except ValueError:
                 print("Invalid input.")   
-    
-    def cart_art(self):
-        print("\tOrder Placed!")
-        print(sum(self.shopCart.items.values()))
-        print(r"""⠀⠀⠀⠀ Shop Again!⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠈⠛⠻⠶⣶⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠈⢻⣆⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⢻⡏⠉⠉⠉⠉⢹⡏⠉⠉⠉⠉⣿⠉⠉⠉⠉⠉⣹⠇⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠈⣿⣀⣀⣀⣀⣸⣧⣀⣀⣀⣀⣿⣄⣀⣀⣀⣠⡿⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠸⣧⠀⠀⠀⢸⡇⠀⠀⠀⠀⣿⠁⠀⠀⠀⣿⠃⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣧⣤⣤⣼⣧⣤⣤⣤⣤⣿⣤⣤⣤⣼⡏⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⠀⠀⢸⡇⠀⠀⠀⠀⣿⠀⠀⢠⡿⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⠤⠼⠷⠤⠤⠤⠤⠿⠦⠤⠾⠃⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢾⣷⢶⣶⠶⠶⠶⠶⠶⠶⣶⠶⣶⡶⠀⠀⠀⠀⠀⠀⠀
-            ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣧⣠⡿⠀⠀⠀⠀⠀⠀⢷⣄⣼⠇⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀""")
-
+   
 ########################################## CARD INTERFACE SUBCLASS #################################################
 
 class Card(CustInterface):
