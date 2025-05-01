@@ -121,7 +121,7 @@ class CustInterface(Interface):
                 elif (userInput == 3):
                     return ShopCart(self.user_id)
                 elif (userInput == 4):
-                    self.shopCart.checkout()
+                    self.ShopCart.checkout(self.user_id)
                     self.cart_art()
                 elif (userInput == 5):
                     return Card(self.user_id)

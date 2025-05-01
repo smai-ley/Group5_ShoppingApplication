@@ -50,6 +50,28 @@ class ShoppingCart():
             print(f"Updated {product_id} quantity to {quantity}.")
         else:
             print("Item not in cart.")
+            
+    def update_customer_balance(self):
+        """
+        Updates the customer's balance with the balance of the finished order.
+        @return: None
+        """
+        try:
+            if self.order.balance > 0:
+                # Update the balance for the customer in the customer table
+                self.cursor.execute("""
+                    UPDATE customer
+                    SET balance = balance + %s
+                    WHERE customer_id = %s
+                """, (self.order.balance, self.user_id))
+            
+                self.conn.commit()  # Commit the transaction
+                print(f"Customer {self.user_id}'s balance updated by ${self.order.balance:.2f}.")
+            else:
+                print("No balance to update. Order balance is zero.")
+        except Exception as e:
+            self.conn.rollback()  # Rollback transaction if error occurs
+            print(f"Error updating customer balance: {e}")
 
     def view_cart(self):
         """
@@ -123,6 +145,7 @@ class ShoppingCart():
 
             self.order.finalize_order_products(self.items, self.order.order_id)
             self.order.modify_row(self.order.order_id, self.user_id, self.order.balance, 'issued')
+            self.update_customer_balance()
             self.order.show_order()
             self.items.clear()
 
